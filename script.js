@@ -7,7 +7,6 @@ async function loadEvents() {
         if (response.ok) {
             const result = await response.json();
             const events = typeof result.body === 'string' ? JSON.parse(result.body) : result.body;
-            console.log("Events:", events);
             displayEvents(events);
         } else {
             console.error("Could not load events.");
