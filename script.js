@@ -5,7 +5,9 @@ async function loadEvents() {
     try {
         const response = await fetch(`${api_base_url}/load-events`);
         if (response.ok) {
-            const events = await response.json();
+            const result = await response.json();
+            const events = typeof result.body === 'string' ? JSON.parse(result.body) : result.body;
+            console.log("Events:", events);
             displayEvents(events);
         } else {
             console.error("Could not load events.");
