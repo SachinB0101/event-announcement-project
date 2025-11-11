@@ -3,7 +3,7 @@ const api_base_url = 'https://ykgx4x4mwd.execute-api.ca-central-1.amazonaws.com/
 
 async function loadEvents() {
     try {
-        const response = await fetch('events.json');
+        const response = await fetch(`${api_base_url}/load-events`);
         if (response.ok) {
             const events = await response.json();
             displayEvents(events);
