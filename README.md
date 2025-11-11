@@ -12,12 +12,13 @@ A web application that allows users to subscribe to an event notification servic
 - **Notifications:** Users receive notifications via AWS SNS when new events are created.  
 - **Automatic Event Expiry:** Events automatically expire after 2 days using DynamoDB TTL.  
 - **CI/CD:** Automated deployment using **AWS CodePipeline**.  
+- **Content Delivery:** Frontend delivered via **AWS CloudFront** for fast, global access.  
 
 ---
 
 ## Tech Stack
 
-- **Frontend:** Hosted on **AWS S3** (static website)  
+- **Frontend:** Hosted on **AWS S3** and delivered through **CloudFront** ([d3lnqu8pzyn695.cloudfront.net](https://d3lnqu8pzyn695.cloudfront.net))  
 - **Backend / API:** **AWS REST API** with 3 endpoints:
   1. **Subscribe** – Add a new subscriber  
   2. **Create Event** – Add a new event to DynamoDB  
@@ -30,7 +31,7 @@ A web application that allows users to subscribe to an event notification servic
 
 ## Architecture Overview
 
-1. User visits the frontend hosted on S3.  
+1. User visits the frontend delivered via **CloudFront**.  
 2. User subscribes to the service or creates an event using the REST API endpoints.  
 3. Created events are stored in DynamoDB with a TTL of 2 days.  
 4. Subscribed users are notified via SNS when a new event is created.  
@@ -60,7 +61,8 @@ A web application that allows users to subscribe to an event notification servic
 
 1. **Frontend Deployment:**
    - Upload your frontend build to the S3 bucket.  
-   - Enable static website hosting on the bucket.  
+   - Enable static website hosting.  
+   - Use CloudFront to deliver the frontend content globally.  
    - Integrate with CodePipeline for automatic deployment on code changes.  
 
 2. **Backend Setup:**
@@ -86,6 +88,7 @@ A web application that allows users to subscribe to an event notification servic
 - TTL in DynamoDB is in **epoch time (seconds)**, so ensure your events store the correct expiration timestamp.  
 - SNS subscriptions can be email, SMS, or other supported protocols.  
 - CodePipeline can automatically deploy frontend and backend changes whenever updates are pushed to your repository.  
+- Access your application via **CloudFront URL:** [https://d3lnqu8pzyn695.cloudfront.net](https://d3lnqu8pzyn695.cloudfront.net)  
 
 ---
 
@@ -100,4 +103,3 @@ This project is licensed under the MIT License.
 **Sachin Bhatt**  
 - GitHub: [your-github-username](https://github.com/your-github-username)  
 - Website: [madebysachin.com](https://madebysachin.com)
-
