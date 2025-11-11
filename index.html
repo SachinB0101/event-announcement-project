@@ -27,7 +27,7 @@
         <!-- Create Event Form Section -->
         <section id="create-event-form" style="display:none;">
             <h3>Create New Event</h3>
-            <form onsubmit="submitNewEvent(event)">
+            <form id="event-form" onsubmit="submitNewEvent(event)">
                 <label for="event-title">Title:</label>
                 <input type="text" id="event-title" required><br>
                 <label for="event-date">Date:</label>
@@ -35,6 +35,7 @@
                 <label for="event-description">Description:</label>
                 <textarea id="event-description" required></textarea><br>
                 <button type="submit">Submit</button>
+                <button type="button" onclick="hideCreateEventForm()">Cancel</button>
             </form>
         </section>
 
@@ -75,6 +76,12 @@
                 document.getElementById("create-event-form").style.display = "block";
             }
 
+            // Function to hide the create event form and reset it
+            function hideCreateEventForm() {
+                document.getElementById("create-event-form").style.display = "none";
+                document.getElementById("event-form").reset();
+            }
+
             // Handle event form submission
             async function submitNewEvent(event) {
                 event.preventDefault();
@@ -102,6 +109,11 @@
 
                     if (response.ok) {
                         alert("New event created successfully!");
+                        
+                        // Reset the form and hide it
+                        document.getElementById("event-form").reset();
+                        document.getElementById("create-event-form").style.display = "none";
+                        
                         loadEvents();  // Reload events after creating a new one
                     } else {
                         alert("Failed to create new event.");
