@@ -11,28 +11,17 @@
 <body>
     <div class="container">
         <header>
-            <h1>Event Announcements</h1>
+            <h1>Event Annoucements</h1>
             <p>Stay tuned for the latest events and announcements!</p>
             <button onclick="subscribeToEvents()">Subscribe to Events</button>
-            <button onclick="showRegisterForm()">Register / Login</button>
         </header>
-
-        <!-- Registration/Login Form -->
-        <section id="register-form" style="display:none;">
-            <h3>Register / Login</h3>
-            <form onsubmit="registerUser(event)">
-                <label for="user-email">Email:</label>
-                <input type="email" id="user-email" required><br>
-                <button type="submit">Submit</button>
-            </form>
-        </section>
 
         <section id="events-container">
             <h2>Latest Events</h2>
             <ul id="events-list">
             </ul>
-            <!-- Only visible to registered users -->
-            <button id="create-event-btn" onclick="showCreateEventForm()" style="display:none;">Create New Event</button>
+            <!-- Button to Show the Create Event Form (Available for All Users Now) -->
+            <button onclick="showCreateEventForm()">Create New Event</button>
         </section>
 
         <!-- Create Event Form Section -->
@@ -51,46 +40,29 @@
 
         <footer>
             <p>Subscribe to get notified about new events!</p>
-            <p>Register to get create new events!</p>
         </footer>
 
         <script>
-            let registeredUser = false;
-
-            // Show registration/login form
-            function showRegisterForm() {
-                document.getElementById("register-form").style.display = "block";
-            }
-
-            // Handle registration/login
-            function registerUser(event) {
-                event.preventDefault();
-                const email = document.getElementById("user-email").value;
-
-                if (email) {
-                    registeredUser = true;
-                    alert(`Registered successfully as ${email}! You can now create events.`);
-                    document.getElementById("register-form").style.display = "none";
-                    document.getElementById("create-event-btn").style.display = "inline-block";
-                }
-            }
-
-            // Load events from local JSON or API
+            // Function to load events from events.json
+            const api_base_url = 'https://ykgx4x4mwd.execute-api.ca-central-1.amazonaws.com/dev';
             async function loadEvents() {
                 try {
                     const response = await fetch('events.json');
                     if (response.ok) {
                         const events = await response.json();
                         displayEvents(events);
+                    } else {
+                        console.error("Could not load events.");
                     }
                 } catch (error) {
                     console.error("Error fetching events:", error);
                 }
             }
 
+            // Function to display events on the page
             function displayEvents(events) {
                 const eventsList = document.getElementById('events-list');
-                eventsList.innerHTML = '';
+                eventsList.innerHTML = ''; // Clear current events
                 events.forEach(event => {
                     const listItem = document.createElement('li');
                     listItem.innerHTML = `<strong>${event.title}</strong> - ${event.date}<br>${event.description}`;
@@ -98,26 +70,87 @@
                 });
             }
 
-            // Show create event form only for registered users
+            // Function to show the create event form (available for all users now)
             function showCreateEventForm() {
-                if (registeredUser) {
-                    document.getElementById("create-event-form").style.display = "block";
-                } else {
-                    alert("You must register to create events.");
+                document.getElementById("create-event-form").style.display = "block";
+            }
+
+            // Handle event form submission
+            async function submitNewEvent(event) {
+                event.preventDefault();
+
+                const title = document.getElementById("event-title").value;
+                const date = document.getElementById("event-date").value;
+                const description = document.getElementById("event-description").value;
+
+                const newEvent = {
+                    title: title,
+                    date: date,
+                    description: description
+                };
+
+                try {
+                    const response = await fetch(`${api_base_url}/create-event`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(newEvent)
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        alert("New event created successfully!");
+                        loadEvents();  // Reload events after creating a new one
+                    } else {
+                        alert("Failed to create new event.");
+                        console.error(result);
+                    }
+                } catch (error) {
+                    alert("Error creating new event. Please try again.");
+                    console.error("Error:", error);
                 }
             }
 
-            // Dummy submit function
-            function submitNewEvent(event) {
-                event.preventDefault();
-                alert("Event creation functionality goes here.");
-            }
-
+            // Subscribe function to integrate with API Gateway and Lambda for SNS subscription
             async function subscribeToEvents() {
                 const email = prompt("Enter your email to subscribe to event notifications:");
-                if (email) alert("Subscribed successfully!");
+                if (email) {
+                    try {
+                        const response = await fetch(`${api_base_url}/subscribe`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ email: email })
+                        });
+
+                        const data = await response.json(); // Parse the response body
+                        console.log("API Response:", data);
+
+                        if (response.ok && data.body) {
+                            const parsedBody = JSON.parse(data.body);  // Parse the 'body' field (which is a string)
+                            if (parsedBody.message) {
+                                alert(parsedBody.message); // Success message from Lambda
+                            } else {
+                                alert("Unexpected response format");
+                                console.error('No message in response body:', parsedBody);
+                            }
+                        } else {
+                            alert("Subscription failed. Please try again.");
+                            console.error(data); // Log the whole response if it doesn't contain 'body' or 'message'
+                        }
+                    } catch (error) {
+                        alert("Error subscribing to events. Please try again later.");
+                        console.error("Error:", error);
+                    }
+                } else {
+                    alert("Email is required for subscription.");
+                }
             }
 
+            // Load events on page load
             window.onload = loadEvents;
         </script>
     </div>
