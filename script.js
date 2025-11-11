@@ -62,10 +62,10 @@ async function submitNewEvent(event) {
         });
 
         const result = await response.json();
-        console.log(result);
+        // console.log(result);
 
         if (response.ok) {
-            alert("New event created successfully!");
+            alert(result.message);
             
             // Reset the form and hide it
             document.getElementById("event-form").reset();
