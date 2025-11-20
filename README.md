@@ -69,7 +69,7 @@ A web application that allows users to subscribe to an event notification servic
    - Create a REST API using AWS API Gateway.  
    - Configure Lambda functions (or other backend services) for endpoints.  
    - Connect endpoints to DynamoDB tables.  
-   - Add backend to CodePipeline for CI/CD automation.  
+   - Add backend to GitHub Actions for CI/CD automation.  
 
 3. **Database Setup:**
    - Create a DynamoDB table to store events.  
@@ -87,18 +87,8 @@ A web application that allows users to subscribe to an event notification servic
 - Make sure your API Gateway has CORS enabled to allow requests from the frontend.  
 - TTL in DynamoDB is in **epoch time (seconds)**, so ensure your events store the correct expiration timestamp.  
 - SNS subscriptions can be email, SMS, or other supported protocols.  
-- CodePipeline can automatically deploy frontend and backend changes whenever updates are pushed to your repository.  
-- Access your application via **CloudFront URL:** [https://d3lnqu8pzyn695.cloudfront.net](https://d3lnqu8pzyn695.cloudfront.net)  
-
----
-
-## License
-
-This project is licensed under the MIT License.  
-
----
-
-## Author
+- CodePipeline can automatically deploy frontend and GitHub Actions for backend changes whenever updates are pushed to repository.  
+- Access application via **CloudFront URL:** [https://d3lnqu8pzyn695.cloudfront.net](https://d3lnqu8pzyn695.cloudfront.net)  
 
 **Sachin Bhatt**  
 - GitHub: [your-github-username](https://github.com/your-github-username)  
