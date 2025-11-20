@@ -4,9 +4,7 @@ on:
   push:
     branches: ["main"]
     paths:
-      - "backend/createEventFunction/**"
-      - "backend/getEventsFromDBFunction/**"
-      - "backend/subscribeToSNSFunction/**"
+      - "backend/**"
 
 jobs:
   deploy:
