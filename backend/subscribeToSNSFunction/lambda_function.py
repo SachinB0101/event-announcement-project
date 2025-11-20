@@ -24,7 +24,7 @@ def lambda_handler(event, context):
 
             return {
                 'statusCode': 200,
-                'body': json.dumps({'message': 'Subscription successful! Please check your email to confirm.'})
+                'body': json.dumps({'message': 'Subscription successful! Please check your email to confirm!!!!.'})
             }
 
         except Exception as e:
