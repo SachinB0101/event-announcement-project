@@ -1,0 +1,57 @@
+name: Deploy Lambda Functions
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "backend/createEventFunction/**"
+      - "backend/getEventsFromDBFunction/**"
+      - "backend/subscribeToSNSFunction/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ca-central-1   # change if needed
+
+      # ZIP AND DEPLOY createEventFunction
+      - name: Zip createEventFunction
+        run: |
+          cd backend/createEventFunction
+          zip -r ../../createEventFunction.zip .
+      - name: Deploy createEventFunction
+        run: |
+          aws lambda update-function-code \
+            --function-name createEventFunction \
+            --zip-file fileb://createEventFunction.zip
+
+      # ZIP AND DEPLOY getEventsFromDBFunction
+      - name: Zip getEventsFromDBFunction
+        run: |
+          cd backend/getEventsFromDBFunction
+          zip -r ../../getEventsFromDBFunction.zip .
+      - name: Deploy getEventsFromDBFunction
+        run: |
+          aws lambda update-function-code \
+            --function-name getEventsFromDBFunction \
+            --zip-file fileb://getEventsFromDBFunction.zip
+
+      # ZIP AND DEPLOY subscribeToSNSFunction
+      - name: Zip subscribeToSNSFunction
+        run: |
+          cd backend/subscribeToSNSFunction
+          zip -r ../../subscribeToSNSFunction.zip .
+      - name: Deploy subscribeToSNSFunction
+        run: |
+          aws lambda update-function-code \
+            --function-name subscribeToSNSFunction \
+            --zip-file fileb://subscribeToSNSFunction.zip
